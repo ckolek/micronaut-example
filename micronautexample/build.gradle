@@ -1,0 +1,68 @@
+plugins {
+  id 'idea'
+  id 'application'
+  id("com.github.johnrengelman.shadow") version "7.1.1"
+  id("io.micronaut.application") version "3.2.1"
+}
+
+version = "0.1"
+group = "me.kolek.example"
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'io.micronaut:micronaut-jackson-databind'
+  implementation 'io.micronaut:micronaut-management'
+  implementation 'io.micronaut:micronaut-runtime'
+  implementation 'io.micronaut.jaxrs:micronaut-jaxrs-server'
+  implementation 'io.micronaut.serde:micronaut-serde-jackson:1.0.0-M7'
+  implementation 'jakarta.annotation:jakarta.annotation-api'
+
+  compileOnly 'org.projectlombok:lombok'
+
+  annotationProcessor 'org.projectlombok:lombok'
+  annotationProcessor 'io.micronaut:micronaut-inject-java'
+  annotationProcessor 'io.micronaut:micronaut-http-validation'
+  annotationProcessor 'io.micronaut.jaxrs:micronaut-jaxrs-processor'
+  annotationProcessor 'io.micronaut.serde:micronaut-serde-processor'
+
+  testImplementation 'org.junit.jupiter:junit-jupiter-api'
+  testImplementation 'io.micronaut.test:micronaut-test-junit5:3.0.5'
+
+  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.2'
+  testRuntimeOnly 'io.micronaut:micronaut-http-client'
+
+  testAnnotationProcessor 'io.micronaut.jaxrs:micronaut-jaxrs-processor'
+}
+
+configurations.all {
+  resolutionStrategy.dependencySubstitution {
+    substitute(module("io.micronaut:micronaut-jackson-databind"))
+        .using(module("io.micronaut.serde:micronaut-serde-jackson:1.0.0-M7"))
+  }
+}
+
+application {
+  mainClass.set("me.kolek.example.Application")
+}
+
+java {
+  sourceCompatibility = JavaVersion.toVersion("17")
+  targetCompatibility = JavaVersion.toVersion("17")
+}
+
+graalvmNative.toolchainDetection = false
+micronaut {
+  runtime("netty")
+  testRuntime("junit5")
+  processing {
+    incremental(true)
+    annotations("me.kolek.example.*")
+  }
+}
+
+test {
+  useJUnitPlatform()
+}
