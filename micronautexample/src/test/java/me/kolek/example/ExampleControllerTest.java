@@ -51,10 +51,10 @@ public class ExampleControllerTest {
         Argument.of(List.class, Argument.of(Map.class, String.class, String.class)));
     Map<String, List<Map<String, String>>> result = client.toBlocking()
         .retrieve(HttpRequest.GET("/2"), type);
-    assertEquals(result, Map.of(
+    assertEquals(result, Map.of("keys", List.of(Map.of(
         "val1", "abc",
         "val2", "123",
         "val3", "true"
-    ));
+    ))));
   }
 }
